@@ -1,1 +1,1 @@
-# youareanidiot-safe
+# youareanidiot
