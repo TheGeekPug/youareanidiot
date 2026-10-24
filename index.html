@@ -1,179 +1,115 @@
 <!DOCTYPE html>
-<html lang="en" translate="no">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="google" content="notranslate">
-    
-    <!-- TheGeekPug -->
-    
-    <meta name="description" content="This is the orgional and the best flash video on the 'net. Once found on www.youdontknowwhoiam.org, not found where it belong, right here on...">
-    <link rel="icon" type="image/jpeg" href="thegeekpug.jpg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>You are an idiot! (dot cc)</title>
+    <link rel="icon" type="image/jpeg" href="thegeekpug.jpg">
+    
+    <!-- Meta descripción -->
+    <meta name="description" content="This is the orgional and the best flash video on the 'net. Once found on www.youdontknowwhoiam.org, not found where it belong, right here on...">
+    
+    <!-- Meta etiqueta de Autor -->
+    <meta name="author" content="TheGeekPug">
+
+    <!-- Más información / Palabras clave solicitadas -->
+    <meta name="keywords" content="TheGeekPug">
+
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #fff; overflow: hidden; height: 100vh; width: 100vw; cursor: default; user-select: none; display: flex; justify-content: center; align-items: center; position: relative; }
-        .speaker-btn { position: absolute; top: 20px; left: 20px; font-size: 35px; background: none; border: none; cursor: default; z-index: 10000; }
-        .main-container { width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; padding: 0; }
-        
-        /* ESCUDO CSS EN EL HOME */
-        img { max-width: 100%; height: 100vh; object-fit: contain; display: block; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+        body {
+            background-color: #ffffff;
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            cursor: default; /* El mouse mantiene la flecha normal */
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #boton-audio {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 40px;
+            cursor: default; /* Quita la mano también del altavoz */
+            background: none;
+            border: none;
+            z-index: 100;
+            padding: 0;
+        }
+
+        .gif-centro {
+            display: block;
+            height: 100vh;
+            width: auto;
+            max-width: 100vw;
+            object-fit: contain;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
 
-    <button id="speaker-button" class="speaker-btn">🔇</button>
-
-    <div class="main-container">
-        <img id="home-gif" src="You_Are_An_Idiot_screen.gif" alt="Idiot!" draggable="false">
-    </div>
-
-    <audio id="bg-audio" src="you-are-an-idiot.mp3" loop preload="auto"></audio>
+    <button id="boton-audio" onclick="event.stopPropagation(); toggleAudio();">🔈</button>
+    
+    <audio id="audio-idiot" src="you-are-an-idiot.mp3" loop></audio>
+    <img src="idiot.gif" alt="You are an idiot" class="gif-centro" draggable="false" oncontextmenu="return false;">
 
     <script>
-        const audio = document.getElementById('bg-audio'), homeGif = document.getElementById('home-gif');
-        const speakerBtn = document.getElementById('speaker-button');
-        const popups = [], P_WD = 400, P_HT = 300;
+        const audio = document.getElementById('audio-idiot');
+        const botonAudio = document.getElementById('boton-audio');
 
-        // FUNCIÓN DEL CARTEL DE CONFIRMACIÓN EXCLUSIVO DEL HOME
-        function controladorSalidaHome(event) {
-            const message = "¿Realmente quieres salir del sitio web?";
-            event.preventDefault();
-            event.returnValue = message; 
-            return message;
-        }
-
-        // Se registra el detector de salida en la ventana principal
-        window.addEventListener('beforeunload', controladorSalidaHome);
-
-        window.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-        });
-
-        function playHomeAudio() {
+        function toggleAudio() {
             if (audio.paused) {
-                audio.load();
                 audio.play()
-                    .then(() => { speakerBtn.textContent = "🔊"; })
-                    .catch(err => console.log("Audio retenido por el navegador:", err));
+                    .then(() => { botonAudio.textContent = '🔊'; })
+                    .catch(e => console.log("Interacción requerida"));
+            } else {
+                audio.pause();
+                audio.currentTime = 0; 
+                botonAudio.textContent = '🔈';
             }
         }
 
-        speakerBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (audio.paused) { playHomeAudio(); } 
-            else { audio.pause(); speakerBtn.textContent = "🔇"; }
-        });
-
-        let isRealClick = false;
-        window.addEventListener('mousedown', (e) => {
-            if (e.target !== speakerBtn) { isRealClick = true; }
-        });
-
-        window.spawnPopup = function() {
-            const scrW = window.screen.availWidth, scrH = window.screen.availHeight;
-            let pX = Math.max(0, Math.floor(Math.random() * (scrW - P_WD))), pY = Math.max(0, Math.floor(Math.random() * (scrH - P_HT)));
-            
-            // VELOCIDAD COMPATIBLE DE 42 PÍXELES
-            let spX = (Math.random() > 0.5 ? 42 : -42) * (Math.random() * 1.2 + 0.8), spY = (Math.random() > 0.5 ? 42 : -42) * (Math.random() * 1.2 + 0.8);
-
-            const favUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/') + '/thegeekpug.jpg';
-            const gifUrl = homeGif.src;
-            const audioUrl = audio.src;
-
-            const win = window.open('', `_blank_${Math.random().toString(36).substring(2,9)}`, `width=${P_WD},height=${P_HT},left=${pX},top=${pY},toolbar=0,scrollbars=0,status=0,resizable=1,popup=true`);
-            
-            if (win) {
-                win.document.write(`
-                    <html translate="no">
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="google" content="notranslate">
-                        <link rel="icon" type="image/jpeg" href="${favUrl}">
-                        <title>Hi!</title>
-                        <style>
-                            *{margin:0;padding:0;}
-                            body{background:#fff;overflow:hidden;display:flex;justify-content:center;align-items:center;height:100vh;cursor:default;user-select:none;}
-                            div{padding:20px;height:100%;width:100%;display:flex;justify-content:center;align-items:center;}
-                            img{max-width:100%;max-height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none;}
-                        </style>
-                    </head>
-                    <body>
-                        <div><img src="${gifUrl}" draggable="false"></div>
-                        <script>
-                            window.addEventListener('contextmenu', (e) => {
-                                e.preventDefault();
-                            });
-
-                            window.addEventListener('resize', () => {
-                                if (window.innerWidth > 400 + 50 || window.innerHeight > 300 + 50) {
-                                    window.resizeTo(400, 300);
-                                }
-                            });
-
-                            // Las pop-ups abren nuevas ventanas al hacer clic, pero se pueden cerrar pacíficamente
-                            window.addEventListener('click', () => {
-                                try {
-                                    if (window.opener && !window.opener.closed) {
-                                        window.opener.spawnPopup();
-                                    } else {
-                                        window.open(window.location.href, '_blank', 'width=400,height=300,popup=true');
-                                    }
-                                } catch(e){}
-                            });
-
-                            let pX = ${pX}, pY = ${pY}, spX = ${spX}, spY = ${spY};
-                            
-                            function bounceBypassLoop() {
-                                const sW = window.screen.availWidth, sH = window.screen.availHeight;
-                                pX += spX; pY += spY;
-                                if (pX <= 0 || pX + 400 >= sW) spX = -spX;
-                                if (pY <= 0 || pY + 300 >= sH) spY = -spY;
-                                window.moveTo(pX, pY);
-                            }
-
-                            setInterval(bounceBypassLoop, 16);
-                        <\/script>
-                    </body>
-                    </html>
-                `);
-                win.document.close();
-
-                const popupAudioTrack = document.createElement('audio');
-                popupAudioTrack.src = audioUrl;
-                popupAudioTrack.loop = true;
-                document.body.appendChild(popupAudioTrack);
-                
-                popupAudioTrack.play().catch(err => console.log("Audio block bypass:", err));
-
-                popups.push({ win, pX, pY, spX, spY, audioObj: popupAudioTrack });
-
-                // TRUCO DE REFRESCO EXCLUSIVO EN EL HOME: Reinicia el detector para evadir las penalizaciones de Chromium por abrir ventanas flotantes
-                window.removeEventListener('beforeunload', controladorSalidaHome);
-                setTimeout(() => {
-                    window.addEventListener('beforeunload', controladorSalidaHome);
-                }, 50);
+        document.body.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play()
+                    .then(() => { botonAudio.textContent = '🔊'; })
+                    .catch(e => console.log("Interacción requerida"));
             }
-        };
 
-        window.addEventListener('click', (e) => {
-            if (!isRealClick) return;
-            isRealClick = false; 
+            const popup = window.open('popup.html', '_blank', 'width=350,height=300');
             
-            playHomeAudio();
-            window.spawnPopup();
+            if (popup) {
+                popup.opener = null; 
+            } else {
+                alert("Por favor, permite las ventanas emergentes para habilitar el efecto.");
+            }
         });
 
-        window.addEventListener('blur', () => { isRealClick = false; });
-
-        setInterval(() => {
-            for (let i = popups.length - 1; i >= 0; i--) {
-                const p = popups[i];
-                if (p.win.closed) { 
-                    try { p.audioObj.pause(); p.audioObj.remove(); } catch(e) {}
-                    popups.splice(i, 1); 
-                }
+        // --- BLOQUEO DE INSPECCIÓN ---
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12') {
+                e.preventDefault();
+                return false;
             }
-        }, 100);
+            if (e.ctrlKey && (e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C') || e.key === 'u' || e.key === 'U')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // --- ALERTA AL CERRAR ---
+        window.addEventListener('beforeunload', function (e) {
+            e.preventDefault();
+            e.returnValue = '¿Estás seguro de que quieres salir?';
+        });
     </script>
 </body>
 </html>
