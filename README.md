@@ -1,2 +1,2 @@
-# youareanidiot
+# YouAreAnIdiot
 This is the original and the best flash video on the 'net. Once found on www.youdontknowwhoiam.org and www.youareanidiot.org, not found where it belong, right here on...
