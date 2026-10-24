@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>You are an idiot!</title>
+    <link rel="icon" type="image/png" href="youareanidiot.png">
+    <style>
+        body {
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            cursor: default; /* El mouse mantiene la flecha normal */
+            user-select: none;
+            -webkit-user-select: none;
+            position: relative;
+        }
+
+        .gif-popup {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 100%;
+            width: auto;
+            object-fit: contain;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="pop-audio" src="you-are-an-idiot.mp3" loop></audio>
+    <img src="idiot.gif" alt="Idiot" class="gif-popup" draggable="false" oncontextmenu="return false;">
+
+    <script>
+        const audio = document.getElementById('pop-audio');
+        
+        // Al hacer clic en cualquier parte de la pop-up
+        document.body.addEventListener('click', () => {
+            // 1. Activa su propio audio en bucle
+            audio.play().catch(err => {});
+
+            // 2. Abre una NUEVA pop-up idéntica multiplicando el efecto
+            const nuevaPopup = window.open('popup.html', '_blank', 'width=350,height=300');
+            
+            if (nuevaPopup) {
+                // Corta el vínculo para que la nueva ventana también sea independiente
+                nuevaPopup.opener = null; 
+            }
+        });
+
+        // --- BLOQUEO DE INSPECCIÓN ---
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12') {
+                e.preventDefault();
+                return false;
+            }
+            if (e.ctrlKey && (e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C') || e.key === 'u' || e.key === 'U')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // --- EFECTO REBOTE AJUSTADO A 55 ---
+        const pantallaAncho = window.screen.availWidth;
+        const pantallaAlto = window.screen.availHeight;
+        const anchoV = 350;
+        const altoV = 300;
+
+        let x = Math.random() * (pantallaAncho - anchoV);
+        let y = Math.random() * (pantallaAlto - altoV);
+        
+        // Nueva velocidad máxima configurada en 55
+        let velX = 55;
+        let velY = 55;
+
+        function mover() {
+            x += velX;
+            y += velY;
+
+            if (x <= 0 || x + anchoV >= pantallaAncho) velX = -velX;
+            if (y <= 0 || y + altoV >= pantallaAlto) velY = -velY;
+
+            window.moveTo(x, y);
+            requestAnimationFrame(mover);
+        }
+        
+        mover();
+    </script>
+</body>
+</html>
