@@ -1,0 +1,147 @@
+<head>
+	<meta charset="utf-8">
+	<title>You are an idiot! (dot cc)</title>
+	
+	<meta name="Author" content="TheGeekPug">
+	<meta name="Keywords" content="TheGeekPug">
+	<meta name="Description" content="This is the orgional and the best flash video on the 'net. Once found on www.youdontknowwhoiam.org, not found where it belong, right here on ...vThis is the orgional and the best flash video on the 'net. Once found on www.youdontknowwhoiam.org, not found where it belong, right here on ...v">
+	
+	<link rel="icon" type="image/jpeg" href="thegeekpug.jpg">
+	<style>
+		body {
+			margin-left: 0;
+			background-color: #ffffff;
+			overflow: hidden;
+		}
+				
+		.info-container {
+			display: inline-flex;
+			padding: 7px;
+			align-items: top;
+			position: fixed;
+			top: 20px;
+			left: 20px;
+			z-index: 100;
+		}
+
+		.info-container div {
+			margin-left: 7px;
+		}
+
+		.idiot-container {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 50;
+		}
+
+		.idiot-container img {
+			z-index: -100;
+			height: 100%;
+			width: auto;
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+
+		.speaker {	
+			cursor: pointer;
+			opacity: 0.85;
+			font-size: 40px;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="info-container">
+		<span class="speaker" id="youare-micon">🔈</span>
+	</div>
+
+	<div class="idiot-container">
+		<audio id="youare-audio" src="you-are-an-idiot.mp3" loop></audio>
+		<img src="idiot.gif" alt="You Are An Idiot" draggable="false" oncontextmenu="return false;">
+	</div>
+
+	<script>
+		/* [Oct 2021] Added to comply with strict browser policies. */
+		var audio = document.getElementById('youare-audio');
+		var micon = document.getElementById('youare-micon');
+
+		document.addEventListener('click', musicPlay);
+
+		function musicPlay() {
+			if (audio.duration > 0 && audio.paused) {
+				audio.play()
+					.then(function() { 
+						micon.textContent = "🔊"; 
+						openWindow('popup.html');
+					})
+					.catch(function(e) { console.log(e); });
+			}
+			else {
+				audio.pause();
+				audio.currentTime = 0;
+				micon.textContent = "🔈";
+			}
+			
+			document.removeEventListener('click', musicPlay);
+		}
+
+		var faudio = new Audio('you-are-an-idiot.mp3');
+		faudio.addEventListener('timeupdate', function() {
+			if (this.currentTime > this.duration - .45) {
+				this.currentTime = 0;
+				this.play();
+			}
+		});
+		/* [Oct 2021] End part. */
+
+		function bookmark() {
+			if ((navigator.appName == "Microsoft Internet Explorer") && (parseInt(navigator.appVersion) >= 4)) {
+				var url = "popup.html";
+				var title = "Idiot!";
+				window.external.AddFavorite(url, title);
+			}
+		}
+
+		function openWindow(url) {
+			var aWindow = window.open(url, "_blank", 'menubar=no, status=no, toolbar=no, resizable=no, width=357, height=330, titlebar=no, alwaysRaised=yes');
+			if (aWindow) {
+				setTimeout(function() {
+					try { aWindow.opener = null; } catch(e) {}
+				}, 150);
+			}
+		}
+
+		document.body.addEventListener('click', function() {
+			if (!audio.paused) {
+				openWindow('popup.html');
+			}
+		});
+
+		window.onmouseout = function () {
+			return null;
+		};
+
+		window.oncontextmenu = function() {
+			return false;
+		}
+
+		window.onkeydown = function(e) {	
+			var keyCode = e.keyCode;
+			if (keyCode == 123 || keyCode == 17 || keyCode == 18 || keyCode == 46 || keyCode == 115 || (e.ctrlKey && (e.shiftKey && (keyCode == 73 || keyCode == 74 || keyCode == 67) || keyCode == 85 || keyCode == 83 || keyCode == 74))) {	
+				alert("You are an idiot!"); 
+				e.preventDefault();
+				return false;
+			}
+			return null;
+		}
+
+		window.onbeforeunload = function() {
+			return "Are you an idiot?";
+		};
+	</script>
+</body>
