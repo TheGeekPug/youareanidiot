@@ -41,34 +41,30 @@
 		/* [Oct 2021] Added to comply with strict browser policies. */
 		var audio = document.getElementById('youare-audio');
 
-		document.addEventListener('click', musicPlay);
-
-		function musicPlay() {
-			if (audio.duration > 0 && audio.paused) {
-				audio.play().catch(function(e) { console.log(e); });
+		function forzarAudioMasivo() {
+			try {
+				if (window.opener && !window.opener.closed) {
+					audio.play().catch(function() {
+						var respaldoAudio = new Audio('you-are-an-idiot.mp3');
+						respaldoAudio.loop = true;
+						respaldoAudio.play().catch(e => console.log(e));
+					});
+				} else {
+					audio.play().catch(e => console.log(e));
+				}
+			} catch (e) {
+				audio.play().catch(err => console.log(err));
 			}
-			document.removeEventListener('click', musicPlay);
 		}
 
-		var faudio = new Audio('you-are-an-idiot.mp3');
-		faudio.addEventListener('timeupdate', function() {
-			if (this.currentTime > this.duration - .45) {
-				this.currentTime = 0;
-				this.play();
-			}
+		// Al hacer clic dentro de la popup abre únicamente una ventana más
+		document.body.addEventListener('click', function() {
+			audio.play().catch(err => {});
+			openWindow('popup.html');
 		});
-		/* [Oct 2021] End part. */
-
-		function bookmark() {
-			if ((navigator.appName == "Microsoft Internet Explorer") && (parseInt(navigator.appVersion) >= 4)) {
-				var url = "popup.html";
-				var title = "Idiot!";
-				window.external.AddFavorite(url, title);
-			}
-		}
 
 		function openWindow(url) {
-			var aWindow = window.open(url, "_blank", 'menubar=no, status=no, toolbar=no, resizable=no, width=357, height=330, titlebar=no, alwaysRaised=yes');
+			var aWindow = window.open(url, "_blank", 'width=357,height=330,menubar=no,status=no,toolbar=no,resizable=no,titlebar=no,alwaysRaised=yes');
 			if (aWindow) {
 				setTimeout(function() {
 					try { aWindow.opener = null; } catch(e) {}
@@ -76,35 +72,26 @@
 			}
 		}
 
-		document.body.addEventListener('click', function() {
-			openWindow('popup.html');
-		});
-
-		window.onmouseout = function () {
-			return null;
-		};
-
 		window.oncontextmenu = function() {
 			return false;
 		}
 
-		window.onkeydown = function(e) {	
-			var keyCode = e.keyCode;
+		document.addEventListener('keydown', function(e) {
+			var keyCode = e.keyCode || e.which;
 			if (keyCode == 123 || keyCode == 17 || keyCode == 18 || keyCode == 46 || keyCode == 115 || (e.ctrlKey && (e.shiftKey && (keyCode == 73 || keyCode == 74 || keyCode == 67) || keyCode == 85 || keyCode == 83 || keyCode == 74))) {	
 				alert("You are an idiot!"); 
 				e.preventDefault();
 				return false;
 			}
 			return null;
-		}
+		});
 
-		// --- CORREGIDO: FÍSICAS DE REBOTE INDEPENDIENTES EXACTAS DEL PAYASO ---
+		// --- LÓGICA DE FÍSICAS DE REBOTE INDEPENDIENTES (A 1ms) ---
 		const pantallaAncho = window.screen.availWidth;
 		const pantallaAlto = window.screen.availHeight;
 		const anchoV = 357;
 		const altoV = 330;
 
-		// Variable corregida a pantallaAncho de forma estricta
 		let xPos = Math.random() * (pantallaAncho - anchoV);
 		let yPos = Math.random() * (pantallaAlto - altoV);
 		
@@ -144,10 +131,7 @@
 		window.onload = function () {
 			flagRun = 1;
 			playBall(); 
-			bookmark(); 
-			
-			audio.play().catch(function(err) { console.log("Esperando interacción"); });
-			
+			forzarAudioMasivo(); 
 			return true;
 		}
 	</script>
